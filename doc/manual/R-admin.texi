@@ -1061,9 +1061,6 @@ inferred values can be overridden in file @file{config.site} or on the
 @command{configure} command line: user-supplied values will be tested by
 compiling some C++11/14/17/20 code.
 
-@c @R{} versions 3.1.0 to 3.3.3 used @code{CXX1X} rather than @code{CXX11}:
-@c these forms were deprecated in 3.4.4 and removed in 3.6.0.
-
 It may be that there is no suitable flag for C++14/17/20 support with
 the default compiler, in which case a different compiler could be
 selected for @code{CXX14} or @code{CXX17} or @code{CXX20} with its
@@ -1845,6 +1842,7 @@ Windows' CRLF line endings.
 
 (`macOS' was known as `OS X' from 2012--2016 and as `Mac OS X' before that.)
 
+[The rest of this paragraph is only relevant after release.]
 The front page of a @acronym{CRAN} site has a link `Download R for (Mac)
 OS X'. Click on that, then download the file
 @file{R-@value{VERSIONno}.pkg} and install it. This runs on macOS 10.13
@@ -2019,9 +2017,9 @@ of the Apple package of the same name: this means that installing a package for
 the @R{} framework which it finds installed.  This can be avoided by
 using @command{pkgutil --forget} (see the previous section).  However,
 note that different versions are installed under
-@file{/Library/Frameworks/R.framework/Versions} as @file{4.0},
-@file{3.6} and so on, so it is not possible to have different
-@samp{3.x.y} or @samp{4.x.y} versions installed for the same @samp{x}.
+@file{/Library/Frameworks/R.framework/Versions} as @file{4.1},
+@file{4.0} and so on, so it is not possible to have different
+@samp{4.x.y} versions installed for the same @samp{x}.
 
 A version of @R{} can be run directly from the command-line as e.g.@:
 @example
@@ -2398,7 +2396,7 @@ source versions of packages without compiled C/C++/Fortran code and offer
 to do so for those with, if @command{make} is available.
 
 Note that most binary packages which include compiled code are tied to a
-particular series (e.g.@: @R{} 4.0.x or 3.6.x) of @R{}.
+particular series (e.g.@: @R{} 4.0.x or 4.1.x) of @R{}.
 
 Installing source packages which do not contain compiled code should
 work with no additional tools. For others you will need the
@@ -5305,8 +5303,8 @@ version.  Usually one can use @samp{Open With}
 (Control/right/two-finger-click in Finder), then select @samp{Installer}
 and @samp{Open} if you get a further warning message.
 
-This applies also to some @R{} distributions, including @R{} 3.6.2 and
-`nightly builds' from @uref{https://mac.r-project.org/}.
+This applies also to some `nightly builds' from
+@uref{https://mac.r-project.org/}.
 
 @node Other C/C++ compilers, Other libraries, Prerequisites, macOS
 @subsection Other C/C++ compilers
