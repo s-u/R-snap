@@ -20,8 +20,8 @@ if [ "$ACTION" = sysdeps ]; then
     sudo apt-get update -qq
     sudo apt-get install -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive
     ## install some tex pkgs by hand
-    sudo -i tlmgr update --self
-    sudo -i tlmgr install titling framed inconsolata
+    sudo tlmgr update --self
+    sudo tlmgr install titling framed inconsolata
 fi
 
 if [ "$ACTION" = build ]; then
