@@ -11,17 +11,26 @@ echo " == Action: $ACTION =="
 echo ''
 uname -a
 
-OBJ="$HOME/R-build"
+BASE="$HOME/R-build"
+OBJ="$BASE/obj"
+LOCALBIN="$BASE/bin"
 SRC="`pwd`"
+
+if [ ! -d "$OBJ" ]; then
+    mkdir -p "$OBJ"
+fi
+if [ ! -d "$LOCALBIN" ]; then
+    mkdir -p "$LOCALBIN"
+fi
+export PATH="$LOCALBIN:$PATH"
 
 if [ "$ACTION" = sysdeps ]; then
     ## for Ubuntu/Debian
     sudo apt-get update -qq
-    sudo apt-get install -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive texlive-fonts-extra
+    sudo apt-get install -q -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive texlive-fonts-extra
 fi
 
 if [ "$ACTION" = build ]; then
-    mkdir -p "$OBJ"
     cd "$OBJ"
     echo == Running configure ...
     "$SRC/configure" --enable-R-shlib
@@ -33,11 +42,9 @@ if [ "$ACTION" = build ]; then
     cat SVN-REVISION
 
     ## Create a fake svn which just outputs that file
-    cp -p SVN-REVISION "$HOME/SVN-REVISION"
-    mkdir "$HOME/bin"
-    echo 'cat ~/SVN-REVISION' > "$HOME/bin/svn"
-    chmod a+x "$HOME/bin/svn"
-    export PATH="$HOME/bin:$PATH"
+    cp -p SVN-REVISION "$BASE/SVN-REVISION"
+    echo "cat $BASE/SVN-REVISION" > "$LOCALBIN/svn"
+    chmod a+x "$LOCALBIN/svn"
 
     echo == Build ===
     ## Now we can build properly
