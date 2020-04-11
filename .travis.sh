@@ -23,16 +23,23 @@ fi
 if [ "$ACTION" = build ]; then
     mkdir -p "$OBJ"
     cd "$OBJ"
+    echo == Running configure ...
     "$SRC/configure" --enable-R-shlib
 
+    echo == Retrieve SVN revision ...
     ## We have to retrieve SVN info from our .meta.json file
-    echo -n "Revision: " && sed -n 's/.*"svnrev": *//p' .meta.json | sed 's:,.*::' > SVN-REVISION
-    echo -n "Last Changed Date: " && sed -n 's/.*"lastdate": *"//p' .meta.json | sed 's:T.*::' >> SVN-REVISION
-    ## the way R checks is to find docs, so building them will do it
-    ## note that this is may be fragile if the check Makefile:svnonly
-    ## changes
-    (cd doc/manual && make -j4 front-matter html-non-svn)
+    echo -n "Revision: " && sed -n 's/.*"svnrev": *//p' "$SRC/.meta.json" | sed 's:,.*::' > SVN-REVISION
+    echo -n "Last Changed Date: " && sed -n 's/.*"lastdate": *"//p' "$SRC/.meta.json" | sed 's:T.*::' >> SVN-REVISION
+    cat SVN-REVISION
 
+    ## Create a fake svn which just outputs that file
+    cp -p SVN-REVISION "$HOME/SVN-REVISION"
+    mkdir "$HOME/bin"
+    echo 'cat ~/SVN-REVISION' > "$HOME/bin/svn"
+    chmod a+x "$HOME/bin/svn"
+    export PATH="$HOME/bin:$PATH"
+
+    echo == Build ===
     ## Now we can build properly
     make -j4
 fi
