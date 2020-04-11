@@ -16,7 +16,8 @@ SRC="`pwd`"
 
 if [ "$ACTION" = sysdeps ]; then
     ## for Ubuntu/Debian
-    sudo apt-get install -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbzip2-dev gettext rsync curl openssh-client texlive texlive-fonts-extra
+    sudo apt-get update -qq
+    sudo apt-get install -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texlive texlive-fonts-extra
 fi
 
 if [ "$ACTION" = build ]; then
