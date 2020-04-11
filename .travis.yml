@@ -1,0 +1,15 @@
+language: minimal
+matrix:
+  include:
+  - os: linux
+    dist: bionic
+    sudo: required
+#  - os: linux
+#    dist: trusty
+#    sudo: required
+install: ./.travis.sh sysdeps
+script: ./.travis.sh build && ./.travis.sh check
+
+env:
+  global:
+  - secure: AsIK7ae0a360UL1I0cihRlJ99/lY4cOkO70KKHRg4bNM27I7kzsezJYDuBwl7oqpVpuw0wilDS3XiExs558tkZx1mTdnOu4XlxFGOpCxZ4fdlXXFnPcD+uGsNVug024ssvXAG4LPOB931IqccYEcuNeK581eAG8cI/jG5Rj2oj584i795NylEuGAKQ3AwaHJj24GCe6AHWm4UK5BMORRukKyewTJPAO122kH7B7g9vziwk6OhwfqP0MlyHfKcaydkBHaRIosrS6nyvJAxhsW6AjuHeNt4a6bOCSuvgWUJtoExeCbbJeve+9mpc9vicDtNljjhGd2lUFYcOKErOirmgrFAngSP3Or+IAch5tEMG9mT/QuHd36dqf3gY91B04KJ3mTrUibxxKhPfC/O0+FVy6yIDl6QmQY/Sfkw1cSactzBrTm7ncSP4zTMhX3VnXmbXDLCUElo/x7KkKso1fHB9cp2B+aeECqqcc4wcu0Rt7U8FjL7qOmviyc6QlqdlHzh+n1Imi1TI7W56rGABu0ZSVi7wuylIXZsYrVL62vqdDAFN/kzPMoWcGAzgbtfW6uV6MvZkM/kD1olt6nmtATmOiVpK9BNjsjLBsQiscevMl8p9p3/6SKUMemYoT8V+XAsVbkXXiQ1Ukoa40UuutOCaEkUATxyYfdIA/2DD47TS0=
