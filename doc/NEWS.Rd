@@ -373,6 +373,13 @@
 
       \item New function \code{activeBindingFunction()} retrieves the
       function of an active binding.
+
+      \item New \code{"cairoFT"} and \code{"pango"} components in the
+      output of \code{grSoftVersion()}.
+      
+      \item New argument \code{symbolfamily} in cairo-based graphics
+      devices and new function \code{cairoSymbolFont()} that can be used
+      to provide the value for that argument.
     }
   }% end{ NEW FEATURES }
 
@@ -694,10 +701,15 @@
       \code{xngettext()}. Thanks to Daniele Medri for the report and all
       the recent work he has done on the Italian translations.
 
-      \item \code{data(package = P)} for \code{P} in \pkg{base} and
+      \item \code{data(package = "P")} for \code{P} in \pkg{base} and
       \pkg{stats} no longer reports the data sets from package
       \pkg{datasets} (which it did for back compatibility for 16 years),
       fixing \PR{17730}.
+
+      \item \code{x[[Inf]]} (returning \code{NULL}) no longer leads to
+      undefined behavior, thanks to a report by Kirill Müller in
+      \PR{17756}.  Further, \code{x[[-Inf]]} and \code{x[[-n]]} now give
+      more helpful error messages.
     }
   }
 
