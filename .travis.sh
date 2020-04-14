@@ -6,10 +6,17 @@ set -e
 ACTION="$1"
 OS=`uname -s`
 
+fold_start() {
+  echo -e "travis_fold:start:$1\033[33;1m$2\033[0m"
+}
+
+fold_end() {
+  echo -e "\ntravis_fold:end:$1\r"
+}
+
 echo ''
-echo " == Action: $ACTION =="
+fold_start "R.$ACTION" " == Action: $ACTION =="
 echo ''
-uname -a
 
 BASE="$HOME/R-build"
 OBJ="$BASE/obj"
@@ -23,14 +30,6 @@ if [ ! -d "$LOCALBIN" ]; then
     mkdir -p "$LOCALBIN"
 fi
 export PATH="$LOCALBIN:$PATH"
-
-fold_start() {
-  echo -e "travis_fold:start:$1\033[33;1m$2\033[0m"
-}
-
-fold_end() {
-  echo -e "\ntravis_fold:end:$1\r"
-}
 
 if [ "$ACTION" = sysdeps ]; then
     fold_start sysdeps.apt 'Install packages via apt-get'
@@ -107,9 +106,23 @@ if [ "$ACTION" = check ]; then
 	    fold_end "$fid"
 	    echo ''
 	done
+
+	fold_start R.info "R sessionInfo"
+	bin/R -e 'sessionInfo()'
+	gcc --version
+	gfortran --version
+	fold_end R.info
+
+	fold_start R.env "Environment variables"
+	bin/R CMD /bin/bash -c set
+	fold_end R.env
+
+	fold_end "R.$ACTION"
 	exit 1
     fi
     echo ''
     echo '-- DONE --'
     echo ''
 fi
+
+fold_end "R.$ACTION"
