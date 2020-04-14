@@ -24,11 +24,22 @@ if [ ! -d "$LOCALBIN" ]; then
 fi
 export PATH="$LOCALBIN:$PATH"
 
+fold_start() {
+  echo -e "travis_fold:start:$1\033[33;1m$2\033[0m"
+}
+
+fold_end() {
+  echo -e "\ntravis_fold:end:$1\r"
+}
+
 if [ "$ACTION" = sysdeps ]; then
+    fold_start sysdeps.apt 'Install packages via apt-get'
     ## for Ubuntu/Debian
     sudo apt-get update -qq
     sudo apt-get install -q -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive unzip
+    fold_end sysdeps.apt
 
+    fold_start sysdeps.tex 'Install TeX packages/fonts'
     ## install inconsolata, required for vignettes
     ## texlive-fonts-extra has it, but is HUGE so let's fetch it directly from CTAN
     (cd /tmp
@@ -43,13 +54,17 @@ if [ "$ACTION" = sysdeps ]; then
     ## update TeX cache and font map
     sudo -i texhash
     sudo -i updmap-sys --enable Map=zi4.map
+    fold_end sysdeps.tex
+fi
+
+if [ "$ACTION" = config ]; then
+    cd "$OBJ"
+    echo == Running configure ...
+    "$SRC/configure" --enable-R-shlib
 fi
 
 if [ "$ACTION" = build ]; then
     cd "$OBJ"
-    echo == Running configure ...
-    "$SRC/configure" --enable-R-shlib
-
     echo == Retrieve SVN revision ...
     ## We have to retrieve SVN info from our .meta.json file
     sed -n 's/.*"svnrev": *//p' "$SRC/.meta.json" | sed 's:,.*::' | sed 's/^/Revision: /' > SVN-REVISION
@@ -84,9 +99,12 @@ if [ "$ACTION" = check ]; then
 	echo ''
 	for i in `find "$OBJ" -name \*fail`; do
 	    echo ''
+	    fid="ft.`basename $i`"
+	    fold_start "$fid" "Failed test: $i"
 	    echo "**  FAILED test: $i"
 	    echo ''
 	    cat $i
+	    fold_end "$fid"
 	    echo ''
 	done
 	exit 1
