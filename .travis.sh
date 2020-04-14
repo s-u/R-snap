@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # bail out on any error
-set -ev
+set -e
 
 ACTION="$1"
 OS=`uname -s`
@@ -27,7 +27,22 @@ export PATH="$LOCALBIN:$PATH"
 if [ "$ACTION" = sysdeps ]; then
     ## for Ubuntu/Debian
     sudo apt-get update -qq
-    sudo apt-get install -q -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive texlive-fonts-extra
+    sudo apt-get install -q -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive unzip
+
+    ## install inconsolata, required for vignettes
+    ## texlive-fonts-extra has it, but is HUGE so let's fetch it directly from CTAN
+    (cd /tmp
+     curl -LO http://mirrors.ctan.org/install/fonts/inconsolata.tds.zip
+     mkdir zi4
+     cd zi4
+     unzip ../inconsolata.tds.zip
+     sudo chmod -Rh 0:0 .
+     sudo rsync -a ./ /usr/share/texmf/
+     sudo rm -rf /tmp/zi4
+    )
+    ## update TeX cache and font map
+    sudo -i texhash
+    sudo -i updmap-sys --enable Map=zi4.map
 fi
 
 if [ "$ACTION" = build ]; then
@@ -59,5 +74,24 @@ fi
 
 if [ "$ACTION" = check ]; then
     cd "$OBJ"
-    make check
+    ## we don't want to die anymore - we want to handle failures
+    ## to report diagnostics
+    set +e
+    ok=true
+    make check || ok=false
+    if [ "$ok" != true ]; then
+	echo "**  make check FAILED"
+	echo ''
+	for i in `find "$OBJ" -name \*fail`; do
+	    echo ''
+	    echo "**  FAILED test: $i"
+	    echo ''
+	    cat $i
+	    echo ''
+	done
+	exit 1
+    fi
+    echo ''
+    echo '-- DONE --'
+    echo ''
 fi
