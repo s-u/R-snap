@@ -14,10 +14,6 @@ fold_end() {
   echo -e "\ntravis_fold:end:$1\r"
 }
 
-echo ''
-fold_start "R.$ACTION" " == Action: $ACTION =="
-echo ''
-
 BASE="$HOME/R-build"
 OBJ="$BASE/obj"
 LOCALBIN="$BASE/bin"
@@ -37,6 +33,9 @@ if [ "$ACTION" = sysdeps ]; then
     sudo apt-get update -qq
     sudo apt-get install -q -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive unzip
     fold_end sysdeps.apt
+
+    ## generate locale
+    sudo -i locale-gen en_US.UTF-8
 
     fold_start sysdeps.tex 'Install TeX packages/fonts'
     ## install inconsolata, required for vignettes
@@ -58,8 +57,11 @@ fi
 
 if [ "$ACTION" = config ]; then
     cd "$OBJ"
-    echo == Running configure ...
+    fold_start R.config "Running configure ..."
+    set -x
     "$SRC/configure" --enable-R-shlib
+    set +x
+    fold_end R.config
 fi
 
 if [ "$ACTION" = build ]; then
@@ -78,9 +80,10 @@ if [ "$ACTION" = build ]; then
     ## pretend we're not using git or else we'd  have to fake git as well..
     if [ -e "$SRC/.git" ]; then mv "$SRC/.git" "$SRC/.git.bak"; fi
 
-    echo == Build ===
     ## Now we can build properly
+    fold_start R.build "Building R ..."
     make -j4
+    fold_end R.build
 
     ## restore .git
     if [ -e "$SRC/.git.bak" ]; then mv "$SRC/.git.bak" "$SRC/.git"; fi
@@ -92,15 +95,17 @@ if [ "$ACTION" = check ]; then
     ## to report diagnostics
     set +e
     ok=true
+    fold_start R.check "Running make check ..."
     make check || ok=false
+    fold_end R.check
     if [ "$ok" != true ]; then
-	echo "**  make check FAILED"
+	echo "${ANSI_RED} **  make check FAILED ** ${ANSI_RESET}"
 	echo ''
 	for i in `find "$OBJ" -name \*fail`; do
 	    echo ''
 	    fid="ft.`basename $i`"
 	    fold_start "$fid" "Failed test: $i"
-	    echo "**  FAILED test: $i"
+	    echo " ** FAILED test: $i "
 	    echo ''
 	    cat $i
 	    fold_end "$fid"
@@ -117,12 +122,13 @@ if [ "$ACTION" = check ]; then
 	bin/R CMD /bin/bash -c set
 	fold_end R.env
 
-	fold_end "R.$ACTION"
+	fold_start R.config.log "R config.log"
+	cat config.log
+	fold_end R.config.log
+
 	exit 1
     fi
     echo ''
     echo '-- DONE --'
     echo ''
 fi
-
-fold_end "R.$ACTION"
