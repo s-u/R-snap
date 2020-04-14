@@ -37,8 +37,8 @@ if [ "$ACTION" = build ]; then
 
     echo == Retrieve SVN revision ...
     ## We have to retrieve SVN info from our .meta.json file
-    echo -n "Revision: " && sed -n 's/.*"svnrev": *//p' "$SRC/.meta.json" | sed 's:,.*::' > SVN-REVISION
-    echo -n "Last Changed Date: " && sed -n 's/.*"lastdate": *"//p' "$SRC/.meta.json" | sed 's:T.*::' >> SVN-REVISION
+    sed -n 's/.*"svnrev": *//p' "$SRC/.meta.json" | sed 's:,.*::' | sed 's/^/Revision: /' > SVN-REVISION
+    sed -n 's/.*"lastdate": *"//p' "$SRC/.meta.json" | sed 's:T.*::' | sed 's/^/Last Changed Date: /' >> SVN-REVISION
     cat SVN-REVISION
 
     ## Create a fake svn which just outputs that file
@@ -46,9 +46,15 @@ if [ "$ACTION" = build ]; then
     echo "cat $BASE/SVN-REVISION" > "$LOCALBIN/svn"
     chmod a+x "$LOCALBIN/svn"
 
+    ## pretend we're not using git or else we'd  have to fake git as well..
+    if [ -e "$SRC/.git" ]; then mv "$SRC/.git" "$SRC/.git.bak"; fi
+
     echo == Build ===
     ## Now we can build properly
     make -j4
+
+    ## restore .git
+    if [ -e "$SRC/.git.bak" ]; then mv "$SRC/.git.bak" "$SRC/.git"; fi
 fi
 
 if [ "$ACTION" = check ]; then
