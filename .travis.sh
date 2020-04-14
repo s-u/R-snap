@@ -35,8 +35,8 @@ if [ "$ACTION" = sysdeps ]; then
      curl -LO http://mirrors.ctan.org/install/fonts/inconsolata.tds.zip
      mkdir zi4
      cd zi4
-     unzip ../inconsolata.tds.zip
-     sudo chmod -Rh 0:0 .
+     unzip -q ../inconsolata.tds.zip
+     sudo chown -Rh 0:0 .
      sudo rsync -a ./ /usr/share/texmf/
      sudo rm -rf /tmp/zi4
     )
