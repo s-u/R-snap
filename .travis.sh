@@ -31,7 +31,7 @@ if [ "$ACTION" = sysdeps ]; then
     fold_start sysdeps.apt 'Install packages via apt-get'
     ## for Ubuntu/Debian
     sudo apt-get update -qq
-    sudo apt-get install -q -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive unzip
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive unzip tzdata locale
     fold_end sysdeps.apt
 
     ## generate locale
@@ -99,14 +99,12 @@ if [ "$ACTION" = check ]; then
     make check || ok=false
     fold_end R.check
     if [ "$ok" != true ]; then
-	echo "${ANSI_RED} **  make check FAILED ** ${ANSI_RESET}"
+	echo -e "${ANSI_RED} **  make check FAILED ** ${ANSI_RESET}"
 	echo ''
 	for i in `find "$OBJ" -name \*fail`; do
 	    echo ''
 	    fid="ft.`basename $i`"
 	    fold_start "$fid" "Failed test: $i"
-	    echo " ** FAILED test: $i "
-	    echo ''
 	    cat $i
 	    fold_end "$fid"
 	    echo ''
@@ -129,6 +127,6 @@ if [ "$ACTION" = check ]; then
 	exit 1
     fi
     echo ''
-    echo '-- DONE --'
+    echo -e "${ANSI_GREEN}-- DONE --${ANSI_RESET}"
     echo ''
 fi
