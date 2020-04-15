@@ -31,7 +31,7 @@ if [ "$ACTION" = sysdeps ]; then
     fold_start sysdeps.apt 'Install packages via apt-get'
     ## for Ubuntu/Debian
     sudo apt-get update -qq
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive unzip tzdata locale
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -q -y gcc g++ gfortran libcairo-dev libreadline-dev libxt-dev libjpeg-dev libicu-dev libssl-dev libcurl4-openssl-dev subversion git automake make libtool libtiff-dev libpcre2-dev liblzma-dev libbz2-dev gettext rsync curl openssh-client texinfo texlive unzip tzdata locales
     fold_end sysdeps.apt
 
     ## generate locale
